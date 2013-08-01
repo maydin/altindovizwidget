@@ -25,6 +25,7 @@ public class AltinBroadCastReceiver extends AppWidgetProvider {
 	}
 
 	private RemoteViews init(Context context) {
+		
 		Intent intent = new Intent(context, AltinBroadCastReceiver.class);
 		intent.setAction("click");
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
