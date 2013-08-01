@@ -33,6 +33,7 @@ public class AltinBroadCastReceiver extends AppWidgetProvider {
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
 				intent, 0);
 		remoteViews.setOnClickPendingIntent(R.id.buttonRefresh, pendingIntent);
+		
 		return remoteViews;
 	}
 
