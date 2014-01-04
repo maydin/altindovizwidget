@@ -130,9 +130,9 @@
         <Button
             android:id="@+id/buttonRefresh"
             android:layout_width="wrap_content"
-            android:layout_height="33dp"
+            android:layout_height="28dp"
             android:text="Yenile"
-            android:textSize="14sp" />
+            android:textSize="12sp" android:padding="0dp"/>
 
         <TextView
             android:id="@+id/textViewUpdateTime"
