@@ -59,6 +59,7 @@ public class AltinBroadCastReceiver extends AppWidgetProvider {
 		super.onReceive(context, intent);
 	}
 
+	
 	private void callService(Context context) {
 		ComponentName thisWidget = new ComponentName(context,
 				AltinBroadCastReceiver.class);
