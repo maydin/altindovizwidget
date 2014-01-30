@@ -1,18 +1,22 @@
 package com.murat.altindoviz;
 
+import java.util.Random;
+
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
 import com.murat.altindoviz.webservice.DataService;
 import com.murat.altindoviz.webservice.IWsdl2CodeEvents;
 
-public class UpdateWidgetService extends Service implements IWsdl2CodeEvents{
+public class UpdateWidgetService extends Service implements IWsdl2CodeEvents {
 
 	public Intent intent;
 	public Context context;
@@ -24,9 +28,9 @@ public class UpdateWidgetService extends Service implements IWsdl2CodeEvents{
 		allWidgetIds = intent
 				.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		context = this.getApplicationContext();
-		
+
 		if (isOnline()) {
-			
+
 			DataService service = new DataService(this);
 			try {
 				service.GetGoldAndCurrencyAsync();
@@ -39,7 +43,6 @@ public class UpdateWidgetService extends Service implements IWsdl2CodeEvents{
 		return super.onStartCommand(intent, flags, startId);
 	}
 
-	
 	public boolean isOnline() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -49,9 +52,12 @@ public class UpdateWidgetService extends Service implements IWsdl2CodeEvents{
 		return false;
 	}
 
-	public void updateValues(int[] allWidgetIds, Context context,
-			Kurlar altin) {
+	public void updateValues(int[] allWidgetIds, Context context, Kurlar altin) {
 
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+		
 		AppWidgetManager appWidgetManager = AppWidgetManager
 				.getInstance(context);
 
@@ -63,7 +69,68 @@ public class UpdateWidgetService extends Service implements IWsdl2CodeEvents{
 			if (altin != null && altin.getList().size() > 0) {
 
 				String[] values = altin.getValues();
-			
+				
+				float previousAltinAlis = Float.parseFloat(preferences.getString("altinAlis", "0"));
+				float previousDolarAlis = Float.parseFloat(preferences.getString("dolarAlis", "0"));
+				float previousEuroAlis = Float.parseFloat(preferences.getString("euroAlis", "0"));
+				float previousAltinSatis = Float.parseFloat(preferences.getString("altinSatis", "0"));
+				float previousDolarSatis = Float.parseFloat(preferences.getString("dolarSatis", "0"));
+				float previousEuroSatis = Float.parseFloat(preferences.getString("euroSatis", "0"));
+				float currentAltinAlis = Float.parseFloat(values[4]);
+				float currentDolarAlis = Float.parseFloat(values[0]);
+				float currentEuroAlis = Float.parseFloat(values[2]);
+				float currentAltinSatis = Float.parseFloat(values[5]);
+				float currentDolarSatis = Float.parseFloat(values[1]);
+				float currentEuroSatis = Float.parseFloat(values[3]);
+				
+				if(previousAltinAlis > 0)
+				{
+					int drawableId;
+					if(previousAltinAlis > currentAltinAlis || previousAltinSatis > currentAltinSatis)
+						drawableId = R.drawable.ic_downarrow;
+					else if(previousAltinAlis < currentAltinAlis || previousAltinSatis < currentAltinSatis)
+						drawableId = R.drawable.ic_uparrow;
+					else
+						drawableId =  R.drawable.ic_equal;
+					
+					remoteViews.setImageViewResource(R.id.altinArrow,drawableId);
+				}
+				
+				if(previousDolarAlis > 0)
+				{
+					int drawableId;
+					if(previousDolarAlis > currentDolarAlis || previousDolarSatis > currentDolarSatis)
+						drawableId = R.drawable.ic_downarrow;
+					else if(previousDolarAlis < currentDolarAlis ||  previousDolarSatis < currentDolarSatis)
+						drawableId = R.drawable.ic_uparrow;
+					else
+						drawableId =  R.drawable.ic_equal;
+					
+					remoteViews.setImageViewResource(R.id.dolarArrow,drawableId);
+				}
+				
+				if(previousEuroAlis > 0)
+				{
+					int drawableId;
+					if(previousEuroAlis > currentEuroAlis || previousEuroSatis > currentEuroSatis)
+						drawableId = R.drawable.ic_downarrow;
+					else if(previousEuroAlis < currentEuroAlis || previousEuroSatis < currentEuroSatis)
+						drawableId = R.drawable.ic_uparrow;
+					else
+						drawableId =  R.drawable.ic_equal;
+					
+					remoteViews.setImageViewResource(R.id.euroArrow,drawableId);
+				}
+				
+				
+				editor.putString("dolarAlis", values[0]);
+				editor.putString("euroAlis", values[2]);
+				editor.putString("altinAlis", values[4]);
+				editor.putString("dolarSatis", values[1]);
+				editor.putString("euroSatis", values[3]);
+				editor.putString("altinSatis", values[5]);
+		        editor.commit();
+		        
 				remoteViews.setTextViewText(R.id.textViewDolarAlis, values[0]);
 				remoteViews.setTextViewText(R.id.textViewDolarSatis, values[1]);
 
@@ -102,36 +169,36 @@ public class UpdateWidgetService extends Service implements IWsdl2CodeEvents{
 	@Override
 	public void Wsdl2CodeStartedRequest() {
 		updateWidget("Yükleniyor");
-		
+
 	}
 
 	@Override
 	public void Wsdl2CodeFinished(String methodName, Object Data) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void Wsdl2CodeFinishedWithException(Exception ex) {
 		updateWidget("Yenile");
-		
+
 	}
 
 	@Override
 	public void Wsdl2CodeEndedRequest() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void Wsdl2CodeFinished(String methodName, Kurlar data) {
-		
+
 		if (data != null) {
 			updateValues(allWidgetIds, context, data);
 		}
 
 		updateWidget("Yenile");
-		
+
 	}
 
 }
