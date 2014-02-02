@@ -6,6 +6,9 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 public class AltinBroadCastReceiver extends AppWidgetProvider {
@@ -44,7 +47,26 @@ public class AltinBroadCastReceiver extends AppWidgetProvider {
 
 			callService(context);
 		}
-		else//probably a resize because of the reload of launcher
+		else if(intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_DELETED))
+		{
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString("dolarAlis", "0");
+			editor.putString("euroAlis", "0");
+			editor.putString("altinAlis", "0");
+			editor.putString("dolarSatis", "0");
+			editor.putString("euroSatis", "0");
+			editor.putString("altinSatis", "0");
+	        editor.commit();
+			return;
+		}
+		else if(intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_DISABLED))
+		{
+			Log.d("altin", "appwidget disabled");
+			return;
+		}
+		else if(intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE))
 		{
 			RemoteViews remoteViews = init(context);
 			
@@ -56,7 +78,6 @@ public class AltinBroadCastReceiver extends AppWidgetProvider {
 			AppWidgetManager.getInstance(context).updateAppWidget(thisWidget, remoteViews);
 		}
 
-		super.onReceive(context, intent);
 	}
 
 	

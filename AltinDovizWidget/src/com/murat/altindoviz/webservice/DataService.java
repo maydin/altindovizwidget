@@ -219,7 +219,7 @@ public class DataService {
 			protected void onPostExecute(Kurlar result) {
 				eventHandler.Wsdl2CodeEndedRequest();
 				if (result != null) {
-					eventHandler.Wsdl2CodeFinished("GetGoldAndCurrency", result);
+					eventHandler.Wsdl2CodeAppFinished("GetGoldAndCurrency", result);
 				}
 			}
 		}.execute();

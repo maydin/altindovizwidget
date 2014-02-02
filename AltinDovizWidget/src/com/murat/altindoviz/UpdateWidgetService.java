@@ -69,6 +69,18 @@ public class UpdateWidgetService extends Service implements IWsdl2CodeEvents {
 			if (altin != null && altin.getList().size() > 0) {
 
 				String[] values = altin.getValues();
+//				String[] values = new String[7];
+//				Random r = new Random();
+//				int num = r.nextInt(100);
+//				values[0] = String.valueOf(num);
+//				values[1] = String.valueOf(num+1);
+//				num = r.nextInt(100);
+//				values[2] = String.valueOf(num);
+//				values[3] = String.valueOf(num+1);
+//				num = r.nextInt(100);
+//				values[4] = String.valueOf(num);
+//				values[5] = String.valueOf(num+1);
+				
 				
 				float previousAltinAlis = Float.parseFloat(preferences.getString("altinAlis", "0"));
 				float previousDolarAlis = Float.parseFloat(preferences.getString("dolarAlis", "0"));
@@ -191,7 +203,7 @@ public class UpdateWidgetService extends Service implements IWsdl2CodeEvents {
 	}
 
 	@Override
-	public void Wsdl2CodeFinished(String methodName, Kurlar data) {
+	public void Wsdl2CodeAppFinished(String methodName, Kurlar data) {
 
 		if (data != null) {
 			updateValues(allWidgetIds, context, data);
